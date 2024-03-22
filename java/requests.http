@@ -1,0 +1,284 @@
+@url=http://127.0.0.1:8080
+
+###################
+################### ACCOUNT
+###################
+
+###
+### LOGIN
+###
+# @name login
+POST {{url}}/account.login
+Content-Type: application/json
+
+{
+    "email": "tom@example.com",
+    "password": "123"
+}
+
+@jwt = {{login.response.body.$.token}}
+
+###
+### GET AUTHORIZED PROFILE
+###
+GET {{url}}/account.profile
+Authorization: Bearer {{jwt}}
+
+###
+### REGISTER USER
+###
+POST {{url}}/account.register
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "fullName": "Tom Spade",
+    "email": "tom@example.com",
+    "password": "123"
+}
+
+###################
+################### USER
+###################
+
+###
+### CREATE USER
+###
+POST {{url}}/users.create
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "fullName": "Tom Spade",
+    "email": "tom@example.com",
+    "password": "123",
+    "roles": ["USER"]
+}
+
+###
+### LIST USERS
+###
+GET {{url}}/users.list?sort=id,desc&page=0
+Authorization: Bearer {{jwt}}
+
+###
+### GET USER
+###
+GET {{url}}/users.get/1744
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+###
+### MODIFY USER
+###
+PUT {{url}}/users.modify/702
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "fullName": "Sam Spade",
+    "email": "sam@example.com",
+    "locked": false,
+    "roles": ["admin","user"]
+}
+
+###
+### SET ROLES
+###
+POST {{url}}/users.setRoles/702
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "roles": ["admin","user"]
+}
+
+###
+### USER SEARCH
+###
+GET {{url}}/users.search?q=exam&sort=email,asc
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+
+###################
+################### CATEGORY
+###################
+
+###
+### CREATE CATEGORY (for authenticated user)
+###
+POST {{url}}/categories.create
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "name": "Category1"
+}
+
+###
+### GET CATEGORY (for authenticated user)
+###
+GET {{url}}/categories.get/152
+Authorization: Bearer {{jwt}}
+
+###
+### LIST CATEGORIES (for authenticated user)
+###
+GET {{url}}/categories.list?size=500&sort=name,asc
+Authorization: Bearer {{jwt}}
+
+###
+### DELETE CATEGORY (for authenticated user)
+###
+DELETE {{url}}/categories.delete/152
+Authorization: Bearer {{jwt}}
+
+###################
+################### NOTE
+###################
+
+###
+### CREATE NOTE (for authenticated user)
+###
+POST {{url}}/notes.create
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "caption": "Note 3",
+    "state": "PRIVATE",
+    "body":"hello note 3 (joe)",
+    "category": "Category 1"
+}
+
+###
+### GET NOTE (for authenticated user)
+###
+GET {{url}}/notes.get/202
+Authorization: Bearer {{jwt}}
+
+###
+### GET NOTE SHARES (for authenticated user)
+###
+GET {{url}}/notes.get/202/shared
+Authorization: Bearer {{jwt}}
+
+###
+### MODIFY NOTE (for authenticated user)
+###
+PUT {{url}}/notes.modify/202
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "caption": "Note 1",
+    "state": "PUBLIC",
+    "body":"hello public note (tom)",
+    "category": "Category1"
+}
+
+###
+### LIST NOTES (for authenticated user)
+###
+GET {{url}}/notes.list?size=100&sort=caption,asc
+Authorization: Bearer {{jwt}}
+
+###
+### DELETE NOTE (for authenticated user)
+###
+DELETE {{url}}/notes.delete/1
+Authorization: Bearer {{jwt}}
+
+###################
+################### SHARE
+###################
+
+###
+### SHARED NOTES (for authenticated user)
+###
+GET {{url}}/shared/notes.list?size=100&sort=note.id,desc
+Authorization: Bearer {{jwt}}
+
+###
+### MODIFY SHARED NOTE (for authenticated user)
+###
+PUT {{url}}/shared/notes.modify/102
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "body":"hello public note (shared 3)"
+}
+
+###
+### GET SHARED NOTE (for authenticated user)
+###
+GET {{url}}/shared/notes.get/1253
+Authorization: Bearer {{jwt}}
+
+###
+### CREATE SHARE (for authenticated user)
+###
+POST {{url}}/shared.create/502
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "userEmail": "joe@example.com",
+    "access": "rw"
+}
+
+###
+### MODIFY SHARE ACCESS (for authenticated user)
+###
+PUT {{url}}/shared.modifyAccess/655
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+    "access": "ro"
+}
+
+###
+### GET SHARE (for authenticated user)
+###
+GET {{url}}/shared.get/502
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+###
+### LIST SHARED NOTES (for authenticated user)
+###
+GET {{url}}/shared.list?size=100
+Authorization: Bearer {{jwt}}
+
+###
+### GET SHARE USERS (for authenticated user)
+###
+GET {{url}}/shared.users/502
+Authorization: Bearer {{jwt}}
+
+###
+### DELETE SHARE (for authenticated user)
+###
+DELETE {{url}}/shared.delete/303
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+###################
+################### NOTE public
+###################
+
+###
+### GET NOTE (for all user)
+###
+GET {{url}}/public/notes.get/504
+Authorization: Bearer {{jwt}}
+
+###
+### LIST NOTES (for all user)
+###
+GET {{url}}/public/notes.list?size=5&sort=caption,asc
+Authorization: Bearer {{jwt}}
+
